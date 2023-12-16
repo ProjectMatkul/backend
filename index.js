@@ -22,6 +22,7 @@ const formattedDate = localDate.toISOString().slice(0, 10);
 console.log(formattedDate);
 
 require("./router/routeAuth")(app);
+require("./router/routerPemilik")(app);
 
 app.listen(3000, () => {
   console.log(`Server running on port ` + port);
