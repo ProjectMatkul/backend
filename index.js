@@ -1,53 +1,28 @@
-// // import express from "express";
-// // import router from "./router/router.js";
-// const router = require('./router/router.js')
-// const express = require('express')
-
-// const db = require('./model/index.js');
-// const bodyParser = require('body-parser');
-
-// // db.sequelize.sync({force: true})
-
-
-// const app = express();
-// const port = 3000;
-
-// // app.use(router)
-// app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({ extended: true }))
-
-// require('./router/router.js')(app)
-
-// app.listen(3000, () => {
-//     console.log("app listen to port" + port)
-// });
-
-
-const router = require('./router/router.js')
-const express = require('express')
-
-const db = require('./model/index.js');
-const bodyParser = require('body-parser');
-const cookieSession = require('cookie-session')
-
-
-
-
+const express = require("express");
+const bodyParser = require("body-parser");
+require("dotenv").config();
+const cookieSession = require("cookie-session");
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  cookieSession({
+    name: "warmindo-session",
+    keys: ["COOKIE_SECRET"],
+    httpOnly: true,
+  })
+);
+
 const port = 3000;
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cookieSession({
-    name: 'warmindo-session',
-    keys: ['COOKIE_SECRET'],
-    httpOnly: true
-}))
+const now = new Date();
+const localDate = new Date(now.getTime() + 7 * 60 * 60000);
+const formattedDate = localDate.toISOString().slice(0, 10);
+console.log(formattedDate);
+
+require("./router/routeAuth")(app);
 
 app.listen(3000, () => {
-    console.log("app listen to port" + port)
+  console.log(`Server running on port ` + port);
 });
-
-// db.sequelize.sync({force: true})
-
-require('./router/router.js')(app)
