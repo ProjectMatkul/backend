@@ -5,9 +5,9 @@ module.exports = function (app) {
 
   app.post("/api/pemilik/addRole", controller.tambahRole);
 
-  app.post("/api/pemilik/viewUser", controller.getAllUser);
+  app.get("/api/pemilik/viewUser", controller.getAllUser);
 
-  app.post("/api/pemilik/viewRole", controller.getAllRole);
+  app.get("/api/pemilik/viewRole", controller.getAllRole);
 
   app.post("/api/pemilik/deleteUser", controller.deleteUser);
 
@@ -16,4 +16,6 @@ module.exports = function (app) {
   app.post("/api/pemilik/editUser", controller.editPengguna);
 
   app.post("/api/pemilik/editRole", controller.editRole);
+
+  app.get("/api/pemilik/roleDatils/:idrole", controller.getRoleDetails);
 };

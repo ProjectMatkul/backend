@@ -15,7 +15,7 @@ exports.tambahPengguna = async (req, res) => {
 
   try {
     let pengguna = await Pengguna.create({
-      idpengguna: "WI" + tanggal + "B" + incId,
+      idpengguna: req.body.idpengguna + tanggal + "B" + incId,
       username: req.body.username,
       password: bcrypt.hashSync(req.body.password, 8),
       namapengguna: req.body.namapengguna,
@@ -162,5 +162,26 @@ exports.editRole = async (req, res) => {
     });
   } catch (error) {
     res.status(500).send({ message: error.message });
+  }
+};
+
+exports.getRoleDetails = async (req, res) => {
+  try {
+    const roleId = req.params.idrole; // Ambil ID peran dari query parameter
+
+    const roleDetails = await Role.findOne({ where: { idrole: roleId } });
+
+    if (!roleDetails) {
+      return res.status(404).json({ message: "Detail peran tidak ditemukan" });
+    }
+
+    // Mengirimkan detail peran sebagai respons
+    res.status(200).json({
+      role: roleDetails.role,
+      status: roleDetails.status,
+      // tambahkan informasi lainnya sesuai kebutuhan
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
