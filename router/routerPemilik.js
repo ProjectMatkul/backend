@@ -17,5 +17,7 @@ module.exports = function (app) {
 
   app.post("/api/pemilik/editRole", controller.editRole);
 
-  app.get("/api/pemilik/roleDatils/:idrole", controller.getRoleDetails);
+  app.get("/api/pemilik/roleDetails/:idrole", controller.getRoleDetails);
+
+  app.get("/api/pemilik/userDetails/:idpengguna", controller.getUserDetails);
 };

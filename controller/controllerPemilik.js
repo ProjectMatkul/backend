@@ -144,7 +144,7 @@ exports.editPengguna = async (req, res) => {
 
 exports.editRole = async (req, res) => {
   try {
-    const { idrole } = req.body; // Ambil ID role dari body request
+    const { idrole } = req.params;
 
     const edit = await Role.findOne({ where: { idrole } });
 
@@ -177,6 +177,7 @@ exports.getRoleDetails = async (req, res) => {
 
     // Mengirimkan detail peran sebagai respons
     res.status(200).json({
+      idrole: roleDetails.idrole,
       role: roleDetails.role,
       status: roleDetails.status,
       // tambahkan informasi lainnya sesuai kebutuhan
@@ -184,4 +185,29 @@ exports.getRoleDetails = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+exports.getUserDetails = async (req, res) => {
+  try {
+    const userId = req.params.idpengguna;
+
+    const userDetails = await Pengguna.findOne({
+      where: { idpengguna: userId },
+    });
+
+    if (!userDetails) {
+      return res
+        .status(404)
+        .json({ message: "Detail Pengguna tidak ditemukan" });
+    }
+
+    res.status(200).json({
+      username: userDetails.username,
+      password: userDetails.password,
+      namapengguna: userDetails.namapengguna,
+      idrole: userDetails.idrole,
+      status: userDetails.status,
+      foto: userDetails.foto,
+    });
+  } catch (error) {}
 };
