@@ -15,7 +15,7 @@ exports.tambahPengguna = async (req, res) => {
 
   try {
     let pengguna = await Pengguna.create({
-      idpengguna: req.body.idpengguna + tanggal + "B" + incId,
+      idpengguna: "WT" + tanggal + "X" + incId,
       username: req.body.username,
       password: bcrypt.hashSync(req.body.password, 8),
       namapengguna: req.body.namapengguna,
