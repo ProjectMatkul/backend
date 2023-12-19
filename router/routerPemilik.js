@@ -1,12 +1,11 @@
 const controller = require("../controller/controllerPemilik");
+const { diskStorage } = require("../config/storage");
+const uploadController = require("../controller/uploadRouter");
 const { verifySignUp } = require("../middleware");
+const multer = require("multer");
 
 module.exports = function (app) {
-  app.post(
-    "/api/pemilik/addPengguna", 
-    [verifySignUp.checkDuplicateUsername],
-    controller.tambahPengguna
-  );
+  app.post("/api/pemilik/addPengguna", [verifySignUp.checkDuplicateUsername], controller.tambahPengguna);
 
   app.post("/api/pemilik/addRole", controller.tambahRole);
 
@@ -25,4 +24,8 @@ module.exports = function (app) {
   app.get("/api/pemilik/roleDetails/:idrole", controller.getRoleDetails);
 
   app.get("/api/pemilik/userDetails/:idpengguna", controller.getUserDetails);
+
+  app.get("/api/pemilik/getProfile/:idpengguna", controller.getProfile);
+
+  app.post("/api/pemilik/upload", multer({ storage: diskStorage }).single("file"), uploadController.upload);
 };

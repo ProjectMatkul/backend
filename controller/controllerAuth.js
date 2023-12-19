@@ -7,9 +7,7 @@ const config = require("../config/auth");
 
 exports.signup = async (req, res) => {
   const today = new Date();
-  const tanggal = `${today.getFullYear()}${(today.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}`;
+  const tanggal = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, "0")}`;
   const total = await Pengguna.count();
   const incId = (total + 1).toString().padStart(2, "0");
 
@@ -48,10 +46,7 @@ exports.login = async (req, res) => {
       return res.status(404).send({ message: "Pengguna tidak ditemukan" });
     }
 
-    let passwordIsValid = bcrypt.compareSync(
-      req.body.password,
-      pengguna.password
-    );
+    let passwordIsValid = bcrypt.compareSync(req.body.password, pengguna.password);
 
     if (!passwordIsValid) {
       return res.status(401).send({
@@ -59,23 +54,18 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { idpengguna: pengguna.idpengguna, idrole: pengguna.idrole },
-      config.secret,
-      {
-        algorithm: "HS256",
-        allowInsecureKeySizes: true,
-        expiresIn: 86400,
-      }
-    );
+    const token = jwt.sign({ idpengguna: pengguna.idpengguna, idrole: pengguna.idrole }, config.secret, {
+      algorithm: "HS256",
+      allowInsecureKeySizes: true,
+      expiresIn: 86400,
+    });
 
     req.session.token = token;
     req.session.idpengguna = pengguna.idpengguna;
 
     const today = new Date();
     const tanggal = today.toISOString().slice(0, 10);
-    const waktu =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const waktu = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
     await AktivitasPengguna.create({
       idpengguna: pengguna.idpengguna,
@@ -98,8 +88,7 @@ exports.masukShift = async (req, res) => {
   try {
     const today = new Date();
     const tanggal = today.toISOString().slice(0, 10);
-    const waktu =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const waktu = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const jam = today.getHours();
 
     if (jam >= 11 && jam < 18) {
@@ -126,13 +115,13 @@ exports.masukShift = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
+  console.log(req.session, "ini req session");
   if (req.session) {
     const today = new Date();
     const tanggal = today.toISOString().slice(0, 10);
-    const waktu =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const waktu = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
-    AktivitasPengguna.create({
+    await AktivitasPengguna.create({
       idpengguna: req.session.idpengguna,
       aktivitas: "Logout",
       tanggal: tanggal,

@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 const cookieSession = require("cookie-session");
+const path = require("path");
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -14,16 +16,16 @@ app.use(
   })
 );
 
-const port = 3000;
+// Menyajikan file statis dari direktori 'uploads'
+const uploadsPath = path.join(__dirname, "uploads");
+app.use("/uploads", express.static(uploadsPath));
 
-const now = new Date();
-const localDate = new Date(now.getTime() + 7 * 60 * 60000);
-const formattedDate = localDate.toISOString().slice(0, 10);
-console.log(formattedDate);
-
+// Menambahkan route yang telah Anda definisikan
 require("./router/routeAuth")(app);
 require("./router/routerPemilik")(app);
 
-app.listen(3000, () => {
+const port = 3000;
+
+app.listen(port, () => {
   console.log(`Server running on port ` + port);
 });

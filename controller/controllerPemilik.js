@@ -7,15 +7,13 @@ const config = require("../config/auth");
 
 exports.tambahPengguna = async (req, res) => {
   const today = new Date();
-  const tanggal = `${today.getFullYear()}${(today.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}`;
+  const tanggal = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, "0")}`;
   const total = await Pengguna.count();
   const incId = (total + 1).toString().padStart(2, "0");
 
   try {
     let pengguna = await Pengguna.create({
-      idpengguna: req.body.idpengguna + tanggal + "B" + incId,
+      idpengguna: "WT" + tanggal + "X" + incId,
       username: req.body.username,
       password: bcrypt.hashSync(req.body.password, 8),
       namapengguna: req.body.namapengguna,
@@ -131,15 +129,34 @@ exports.editPengguna = async (req, res) => {
 
     await edit.update({
       username: req.body.username,
-      password: bcrypt.hashSync(req.body.password, 8),
+      // password: bcrypt.hashSync(req.body.password, 8),
       namapengguna: req.body.namapengguna,
       idrole: req.body.idrole,
+
       status: req.body.status,
       foto: req.body.foto,
     });
 
     res.status(200).send({
       message: "Update pengguna berhasil",
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+exports.getRoleNameById = async (req, res) => {
+  try {
+    const { idrole } = req.params;
+
+    const role = await Role.findOne({ where: { idrole } });
+
+    if (!role) {
+      return res.status(404).send({ message: "Role tidak ditemukan" });
+    }
+
+    res.status(200).send({
+      namarole: role.namarole,
     });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -168,7 +185,6 @@ exports.editRole = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
-
 
 exports.getRoleDetails = async (req, res) => {
   try {
@@ -201,46 +217,39 @@ exports.getUserDetails = async (req, res) => {
     });
 
     if (!userDetails) {
-      return res
-        .status(404)
-        .json({ message: "Detail Pengguna tidak ditemukan" });
+      return res.status(404).json({ message: "Detail Pengguna tidak ditemukan" });
     }
 
     res.status(200).json({
       username: userDetails.username,
-      password: userDetails.password,
+      // password: userDe tails.password,
       namapengguna: userDetails.namapengguna,
       idrole: userDetails.idrole,
       status: userDetails.status,
-      foto: userDetails.foto,
     });
   } catch (error) {}
 };
 
 exports.getProfile = async (req, res) => {
-  const idpengguna = req.session.idpengguna
+  const idpengguna = req.session.idpengguna;
 
   try {
-      const pengguna = await Pengguna.findOne({
-          attributes: ['idpengguna', 'username', 'namapengguna', 'foto', 'status', [sequelize.col('Role.role'), 'role']],
-          include: {
-              model: Role,
-              attributes: [],
-              on: {
-                  idrole: sequelize.where(
-                      sequelize.col('Pengguna.idrole'),
-                      '=',
-                      sequelize.col('Role.idrole')
-                  ),
-              }
-          },  
-          where: {
-              idpengguna: idpengguna
-          }
-      })
+    const pengguna = await Pengguna.findOne({
+      attributes: ["idpengguna", "username", "namapengguna", "foto", "status", [sequelize.col("Role.role"), "role"]],
+      include: {
+        model: Role,
+        attributes: [],
+        on: {
+          idrole: sequelize.where(sequelize.col("Pengguna.idrole"), "=", sequelize.col("Role.idrole")),
+        },
+      },
+      where: {
+        idpengguna: idpengguna,
+      },
+    });
 
-      res.status(200).send(pengguna)
+    res.status(200).send(pengguna);
   } catch (error) {
-      res.status(500).send({ error: error.message })
+    res.status(500).send({ error: error.message });
   }
-}
+};
