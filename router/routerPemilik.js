@@ -1,7 +1,12 @@
 const controller = require("../controller/controllerPemilik");
+const { verifySignUp } = require("../middleware");
 
 module.exports = function (app) {
-  app.post("/api/pemilik/addPengguna", controller.tambahPengguna);
+  app.post(
+    "/api/pemilik/addPengguna", 
+    [verifySignUp.checkDuplicateUsername],
+    controller.tambahPengguna
+  );
 
   app.post("/api/pemilik/addRole", controller.tambahRole);
 
@@ -13,9 +18,9 @@ module.exports = function (app) {
 
   app.post("/api/pemilik/deleteRole", controller.deleteRole);
 
-  app.post("/api/pemilik/editUser", controller.editPengguna);
+  app.put("/api/pemilik/editUser/:idpengguna", controller.editPengguna);
 
-  app.post("/api/pemilik/editRole", controller.editRole);
+  app.put("/api/pemilik/editRole/:idrole", controller.editRole);
 
   app.get("/api/pemilik/roleDetails/:idrole", controller.getRoleDetails);
 

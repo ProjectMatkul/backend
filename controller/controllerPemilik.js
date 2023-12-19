@@ -61,14 +61,18 @@ exports.tambahRole = async (req, res) => {
 
 exports.getAllUser = async (req, res) => {
   try {
-    const account = await Pengguna.findAll();
+    const account = await Pengguna.findAll({
+      include: {
+        model: Role,
+        attributes: ["idrole", "role"],
+      },
+    });
 
     res.status(200).send(account);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
 };
-
 exports.getAllRole = async (req, res) => {
   try {
     const roles = await Role.findAll();
@@ -165,6 +169,7 @@ exports.editRole = async (req, res) => {
   }
 };
 
+
 exports.getRoleDetails = async (req, res) => {
   try {
     const roleId = req.params.idrole; // Ambil ID peran dari query parameter
@@ -211,3 +216,31 @@ exports.getUserDetails = async (req, res) => {
     });
   } catch (error) {}
 };
+
+exports.getProfile = async (req, res) => {
+  const idpengguna = req.session.idpengguna
+
+  try {
+      const pengguna = await Pengguna.findOne({
+          attributes: ['idpengguna', 'username', 'namapengguna', 'foto', 'status', [sequelize.col('Role.role'), 'role']],
+          include: {
+              model: Role,
+              attributes: [],
+              on: {
+                  idrole: sequelize.where(
+                      sequelize.col('Pengguna.idrole'),
+                      '=',
+                      sequelize.col('Role.idrole')
+                  ),
+              }
+          },  
+          where: {
+              idpengguna: idpengguna
+          }
+      })
+
+      res.status(200).send(pengguna)
+  } catch (error) {
+      res.status(500).send({ error: error.message })
+  }
+}
